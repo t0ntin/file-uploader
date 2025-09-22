@@ -1,0 +1,9 @@
+<!-- views/partials/errors.ejs -->
+<% if (locals.errors) {%>
+  <%console.log(locals); %>
+  <ul class="error">
+    <% errors.forEach(function(error) { %>
+      <li><%= error.msg %></li>
+    <% }); %>
+  </ul>
+<% } %>

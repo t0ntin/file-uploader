@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/head.ejs')%>
+
+  <link rel="stylesheet" href="./css/style.css">
+  <!-- <script src="./js/script.js"defer></script> -->
+  <title>Sign up</title>
+</head>
+<body>
+  <main>
+      <h1><%= title %></h1> 
+  <form action="/sign-up" method="POST">
+    <!-- <label for="firstName">Name</label> -->
+    <input type="text" name="firstName" id="firstName" placeholder="First Name" value="" autocomplete="firstName">
+
+    <input type="text" name="lastName" id="lastName" placeholder="Last Name" value="" autocomplete="lastName">
+
+    <input type="email" name="email" id="email" placeholder="Email" value="" autocomplete="email">
+
+    <input type="password" name="password" id="password" placeholder="Password" value="" autocomplete="password">
+
+    <button type="submit">Submit</button>
+  </form>
+  </main>
+
+
+</body>
+</html>

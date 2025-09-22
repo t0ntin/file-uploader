@@ -11,6 +11,12 @@ import router from './routes/router.js';
 import bcrypt from 'bcryptjs';
 import dotenv from "dotenv";
 dotenv.config();
+import { PrismaSessionStore } from "@quixo3/prisma-session-store";
+
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
+const prisma = new PrismaClient();
+console.log("Prisma ready!");
 const PgSession = connectPgSimple(session);
 
 
@@ -28,20 +34,64 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.urlencoded({extended:true}));
 
 app.use(session({
-  store: new PgSession({ pool: pool }),
-  secret: "cats",
+  secret: "cats", // change this to an env variable in production
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 24 * 60 * 60 * 1000 } // 1 day in milliseconds
+  store: new PrismaSessionStore(prisma, {
+    checkPeriod: 2 * 60 * 1000, // clean up expired sessions every 2 minutes
+    dbRecordIdIsSessionId: true,
+    dbRecordIdFunction: undefined,
+  }),
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
+  },
+
 }));
 
+app.use(passport.initialize());
 app.use(passport.session());
 
+passport.use(
+  new LocalStrategy(
+    { usernameField: "email" }, // tell Passport to use "email" instead of "username"
+    async (email, password, done) => {
+      try {
+        const user = await prisma.users.findUnique({
+          where: { email },
+        });
 
+        if (!user) {
+          return done(null, false, { message: "User not found" });
+        }
 
-app.get(/^\/$|\/index(\.html)?$/, (req, res) => {
-  res.render('index', {title: 'ejs is cool' });
+        const isValid = await bcrypt.compare(password, user.password_hash);
+
+        if (!isValid) {
+          return done(null, false, { message: "Incorrect password" });
+        }
+
+        return done(null, user);
+      } catch (err) {
+        return done(err);
+      }
+    }
+  )
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user.id); // store only the user ID in the session
 });
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await prisma.users.findUnique({ where: { id } });
+    done(null, user); // attach the full user object to req.user
+  } catch (err) {
+    done(err);
+  }
+});
+
+app.use('/', router);
 
 app.use((req, res) => {
   res.status(404).render('404');
