@@ -19,7 +19,9 @@
     <input type="email" name="email" id="email" placeholder="Email" value="" autocomplete="email">
 
     <input type="password" name="password" id="password" placeholder="Password" value="" autocomplete="password">
-
+    <% if (title === 'Success') { %>
+        <h3>Proceed to <a href="/">login </a>page to log in.</h3>
+    <%}%>
     <button type="submit">Submit</button>
   </form>
   </main>

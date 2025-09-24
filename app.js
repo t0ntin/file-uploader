@@ -53,18 +53,18 @@ app.use(passport.session());
 
 passport.use(
   new LocalStrategy(
-    { usernameField: "email" }, // tell Passport to use "email" instead of "username"
+    { usernameField: "email" }, 
     async (email, password, done) => {
       try {
-        const user = await prisma.users.findUnique({
+        const user = await prisma.user.findUnique({
           where: { email },
         });
 
         if (!user) {
-          return done(null, false, { message: "User not found" });
+          return done(null, false, { message: "Incorrect email" });
         }
 
-        const isValid = await bcrypt.compare(password, user.password_hash);
+        const isValid = await bcrypt.compare(password, user.passwordHash);
 
         if (!isValid) {
           return done(null, false, { message: "Incorrect password" });
@@ -84,8 +84,8 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await prisma.users.findUnique({ where: { id } });
-    done(null, user); // attach the full user object to req.user
+    const user = await prisma.user.findUnique({ where: { id } });
+    done(null, user); 
   } catch (err) {
     done(err);
   }

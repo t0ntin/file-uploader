@@ -1,8 +1,7 @@
 import {addNewUserToDB } from '../db/user.js';
 import { body, validationResult } from "express-validator";
-import bcrypt from 'bcryptjs';
 import passport from 'passport';
-import e from 'express';
+import express from 'express';
 
 
 function getSignInView(req, res) {
@@ -15,9 +14,8 @@ function getSignUpView(req, res) {
 
 async function signUpPost(req, res, next) {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const {firstName, lastName, email} = req.body;
-    await addNewUserToDB(firstName, lastName, email, hashedPassword);
+    const {firstName, lastName, email, password} = req.body;
+    await addNewUserToDB(firstName, lastName, email, password);
       res.render('sign-up', {title: 'Success'})
   } catch (error) {
       console.error(error);
@@ -25,9 +23,23 @@ async function signUpPost(req, res, next) {
   }
 };
 
+async function signInPost(req, res, next) {
+  passport.authenticate('local', {
+    successRedirect: '/drive',
+    failureRedirect: '/',
+  })(req, res, next);
+  console.log('success');
+};
+
+async function getDriveView(req, res) {
+  res.render('drive', {title: 'Your Drive'})
+}
+
 export {
   getSignInView,
   getSignUpView,
   signUpPost,
+  signInPost,
+  getDriveView,
 
 }

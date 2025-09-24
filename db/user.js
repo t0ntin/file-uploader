@@ -1,29 +1,29 @@
 import pkg from "@prisma/client";
-import bcrypt from "bcryptjs";
+import bcrypt from 'bcryptjs';
 const { PrismaClient } = pkg;
 
 const prisma = new PrismaClient();
 
-async function addNewUserToDB(firstName, lastName, email, hashedPassword) {
+async function addNewUserToDB(firstName, lastName, email, password) {
   try {
-    // const password_hash = await bcrypt.hash(password, 10);
-
-    const user = await prisma.users.create({
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await prisma.User.create({
       data: {
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-        password_hash: hashedPassword,
+        firstName,
+        lastName,
+        email,
+        passwordHash: hashedPassword,
       },
     });
 
-    console.log("User added:", user);
+    console.log('User added:', user);
     return user;
   } catch (err) {
-    console.error("Error adding user:", err);
+    console.error('Error adding user:', err);
     throw err;
   }
 }
+
 
 export {
   addNewUserToDB,
