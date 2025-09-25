@@ -1,8 +1,6 @@
 import {addNewUserToDB } from '../db/user.js';
 import { body, validationResult } from "express-validator";
 import passport from 'passport';
-import express from 'express';
-
 
 function getSignInView(req, res) {
   res.render('index', {title: "Sign in"})
@@ -25,7 +23,7 @@ async function signUpPost(req, res, next) {
 
 async function signInPost(req, res, next) {
   passport.authenticate('local', {
-    successRedirect: '/drive',
+    successRedirect: '/upload',
     failureRedirect: '/',
   })(req, res, next);
   console.log('success');
@@ -35,11 +33,17 @@ async function getDriveView(req, res) {
   res.render('drive', {title: 'Your Drive'})
 }
 
+
+function getUploadView(req, res) {
+  res.render('upload', {title: "Upload a file", message: null})
+}
+
 export {
   getSignInView,
   getSignUpView,
   signUpPost,
   signInPost,
   getDriveView,
-
+  getUploadView,
+  
 }

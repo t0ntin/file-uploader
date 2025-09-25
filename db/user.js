@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 async function addNewUserToDB(firstName, lastName, email, password) {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await prisma.User.create({
+    const user = await prisma.user.create({
       data: {
         firstName,
         lastName,
@@ -24,8 +24,29 @@ async function addNewUserToDB(firstName, lastName, email, password) {
   }
 }
 
+async function storeFileInfoInDB(userId, folderId, originalname, mimetype, fileSize) {
+  try {
+
+    const fileInfo = await prisma.file.create({
+      data: {
+        ownerId: userId, 
+        folderId: folderId || null,
+        fileName: originalname,
+        fileSize: BigInt(fileSize),
+        mimeType: mimetype,
+        uploadedAt: new Date(),
+      }
+    })
+    return fileInfo;
+  } catch(error) {
+    console.error('Error adding file: ', error);
+    throw error;
+  }
+
+}
 
 export {
   addNewUserToDB,
+  storeFileInfoInDB, 
 
 }

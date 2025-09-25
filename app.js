@@ -12,8 +12,10 @@ import bcrypt from 'bcryptjs';
 import dotenv from "dotenv";
 dotenv.config();
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
+import multer from 'multer';
 
 import pkg from "@prisma/client";
+import { storeFileInfoInDB } from './db/user.js';
 const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
 console.log("Prisma ready!");
@@ -92,6 +94,25 @@ passport.deserializeUser(async (id, done) => {
 });
 
 app.use('/', router);
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // folder where files will be saved
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname); // unique file name
+  }
+});
+
+const upload = multer({ storage });
+
+app.post('/upload', upload.single('file'), async (req, res) => {
+  console.log('this is req.file: ', req.file);
+  console.log('this is req.user: ', req.user);
+  const folderId = null;
+  await storeFileInfoInDB(req.user.id, folderId, req.file.originalname, req.file.mimetype, req.file.size);
+  res.render('upload', {title: 'Upload a file', message: 'Upload successful'});
+});
 
 app.use((req, res) => {
   res.status(404).render('404');
