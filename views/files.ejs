@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/head.ejs')%>
+
+  <link rel="stylesheet" href="./css/style.css">
+  <!-- <script src="./js/script.js"defer></script> -->
+  <title>Files</title>
+</head>
+<body>
+  <main>
+    <h1>
+      <%=title %>
+    </h1>
+      <form class="create-folder-form" action="/create-folder" method="POST">
+        <input id="newFolderName" type="text" name="newFolderName" value="" placeholder="New folder name">
+        <% if (message) { %>
+          <h3><%= message %></h3>
+          <% } %>
+        <button type="submit">Create Folder</button>
+      </form>
+    <% if (files) { %>
+      <% files.forEach((file) => { %>
+        <ul>
+          <li><%=file.fileName %></li> <li>
+            <li><%=`${file.fileSize / BigInt(1024)} kb`%></li>
+            <li><%=file.mimeType %></li>
+            <li><%=file.uploadedAt.toLocaleString() %></li>
+            <form class="download-form" action="/download" method="POST">
+              <input type="hidden" name="id" value="<%= file.id%>">
+              <button type="submit">Download</button>
+            </form></li>
+        </ul>
+      <% }) %>
+    <% } %>
+
+    <% if (folders) { %>
+      <% folders.forEach((folder) => { %>
+          <li><%= folder.name %></li>
+      <% }); %>
+    <% } %>
+  </main>
+
+</body>
+</html>

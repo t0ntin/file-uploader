@@ -45,8 +45,53 @@ async function storeFileInfoInDB(userId, folderId, originalname, mimetype, fileS
 
 }
 
+async function getFilesFromDB() {
+  try {
+    const files = await prisma.file.findMany();
+    return files;
+  } catch (error) {
+    console.error('Error retrieving file list.', error);
+    throw error;
+  }
+
+}
+
+async function findFileById(id) {
+ const file = await prisma.file.findUnique({
+  where: {
+    id:id
+  }
+ })
+ return file;
+}
+
+async function createFolderInDB(ownerId, parentId, newFolderName) {
+  const newFolder = await prisma.folder.create({
+    data: {
+      ownerId: ownerId,
+      parentId: parentId,
+      name: newFolderName,
+    }
+  })
+  return newFolder;
+}
+
+async function getFoldersFromDb() {
+  try {
+    const folders = await prisma.folder.findMany();
+    return folders;
+  } catch (error) {
+    console.error('Error retrieving folder list', error);
+    throw error;
+  }
+}
+
 export {
   addNewUserToDB,
   storeFileInfoInDB, 
+  getFilesFromDB,
+  findFileById,
+  createFolderInDB,
+  getFoldersFromDb,
 
 }

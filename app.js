@@ -108,10 +108,10 @@ const upload = multer({ storage });
 
 app.post('/upload', upload.single('file'), async (req, res) => {
   console.log('this is req.file: ', req.file);
-  console.log('this is req.user: ', req.user);
+  // console.log('this is req.user: ', req.user);
   const folderId = null;
   await storeFileInfoInDB(req.user.id, folderId, req.file.originalname, req.file.mimetype, req.file.size);
-  res.render('upload', {title: 'Upload a file', message: 'Upload successful'});
+  res.redirect('files');
 });
 
 app.use((req, res) => {

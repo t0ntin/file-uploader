@@ -1,5 +1,5 @@
 import express from 'express';
-import { getSignInView, getSignUpView, signUpPost, signInPost, getDriveView, getUploadView} from '../controllers/controller.js';
+import { getSignInView, getSignUpView, signUpPost, signInPost, getDriveView, getUploadView, downloadFile, getFilesView, createFolderPost} from '../controllers/controller.js';
 const router = express.Router();
 
 router.get('/', getSignInView);
@@ -12,5 +12,10 @@ router.post('/sign-in', signInPost);
 router.get('/drive', getDriveView);
 
 router.get('/upload', getUploadView);
+
+router.post('/download', downloadFile);
+
+router.get('/files', getFilesView);
+router.post('/create-folder', createFolderPost);
 
 export default router;

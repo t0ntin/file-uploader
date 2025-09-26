@@ -9,14 +9,19 @@
 </head>
 <body>
   <main>
-    <h1><%= title %></h1>
-    <form action="/sign-in" method="POST">
-      <input type="email" name="email" id="email" placeholder="Email" autocomplete="email">
+    <% if (user) { %>
+      <p> <%= user.firstName%>, you're signed in. Proceed to <a href="/upload">upload</a> page.</p>
+    <% } else {%>
 
-      <input type="password" name="password" id="password" placeholder="Password">
-
-      <button type="submit">Submit</button>
-    </form>
+      <h1><%= title %></h1>
+      <form action="/sign-in" method="POST">
+        <input type="email" name="email" id="email" placeholder="Email" autocomplete="email">
+  
+        <input type="password" name="password" id="password" placeholder="Password">
+  
+        <button type="submit">Submit</button>
+      </form>
+    <%}%>
   </main>
 
 </body>

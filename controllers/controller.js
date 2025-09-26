@@ -1,9 +1,11 @@
-import {addNewUserToDB } from '../db/user.js';
+import {addNewUserToDB, getFilesFromDB, findFileById, createFolderInDB, getFoldersFromDb } from '../db/user.js';
 import { body, validationResult } from "express-validator";
 import passport from 'passport';
 
 function getSignInView(req, res) {
-  res.render('index', {title: "Sign in"})
+  console.log('this is req.user: ', req.user);
+  const user = req.user;
+  res.render('index', {title: "Sign in", user})
 }
 
 function getSignUpView(req, res) {
@@ -31,11 +33,34 @@ async function signInPost(req, res, next) {
 
 async function getDriveView(req, res) {
   res.render('drive', {title: 'Your Drive'})
+};
+
+
+async function getUploadView(req, res) {
+  res.render('upload', {title: "Upload a file", message: null})
+};
+
+async function getFilesView(req, res) {
+  const files = await getFilesFromDB(); 
+  const folders = await getFoldersFromDb();
+  res.render('files', {title: 'Your files:', message: null,  files, folders})
 }
 
+async function downloadFile(req, res) {
+  const file = await findFileById(Number(req.body.id));
 
-function getUploadView(req, res) {
-  res.render('upload', {title: "Upload a file", message: null})
+
+}
+
+async function createFolderPost(req, res) {
+  console.log('this is req.body: ', req.body);
+  const parentId = req.body.parentId || null;
+  const ownerId = req.user.id;
+  const files = await getFilesFromDB(); 
+  await createFolderInDB(ownerId, parentId, req.body.newFolderName);
+  const folders = await getFoldersFromDb();
+  console.log(folders);
+  res.render('files', {title: 'Your files:', message: 'Folder created', files, folders})
 }
 
 export {
@@ -45,5 +70,9 @@ export {
   signInPost,
   getDriveView,
   getUploadView,
-  
+  downloadFile,
+  getFilesView,
+  createFolderPost,
+
 }
+
