@@ -1,5 +1,5 @@
 import express from 'express';
-import { getSignInView, getSignUpView, signUpPost, signInPost, getDriveView, getUploadView, downloadFile, getFilesView, createFolderPost, editFolderNamePost
+import { getSignInView, getSignUpView, signUpPost, signInPost, getDriveView, getUploadView, downloadFile, getFilesView, createFolderPost, editFolderNamePost, deleteFolderPost
   // showFoldersInFilesView
 } from '../controllers/controller.js';
 const router = express.Router();
@@ -24,5 +24,7 @@ router.get('/files/:id', getFilesView);
 router.post('/files/:id/create-folder', createFolderPost);
 
 router.post('/edit-folder-name', editFolderNamePost);
+
+router.post('/delete-folder', deleteFolderPost);
 
 export default router;

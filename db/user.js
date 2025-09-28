@@ -177,6 +177,21 @@ async function editFolderName(id, editedFolderName) {
   }
 }
 
+async function deleteFolder(id) {
+  try {
+  const deletedFolder = await prisma.folder.delete({
+    where: {
+      id:id,
+    }
+  });
+  return deletedFolder;
+  } catch (error) {
+    console.error('Error inside deleteFolder', error);
+    throw error;
+  }
+};
+
+
 export {
   addNewUserToDB,
   storeFileInfoInDB, 
@@ -190,5 +205,6 @@ export {
   getFilesInSelectedFolder, 
   getSelectedFolderId,
   editFolderName,
+  deleteFolder,
 
 }

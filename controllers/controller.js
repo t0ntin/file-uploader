@@ -1,4 +1,4 @@
-import {addNewUserToDB, getFilesFromDB, findFileById, createFolderInDB, getFoldersFromDb, getRootFiles, getRootFolders, getSubFolders, getFilesInSelectedFolder, getSelectedFolderId, editFolderName } from '../db/user.js';
+import {addNewUserToDB, getFilesFromDB, findFileById, createFolderInDB, getFoldersFromDb, getRootFiles, getRootFolders, getSubFolders, getFilesInSelectedFolder, getSelectedFolderId, editFolderName, deleteFolder } from '../db/user.js';
 import { body, validationResult } from "express-validator";
 import passport from 'passport';
 
@@ -114,6 +114,13 @@ async function editFolderNamePost(req, res) {
   }
 };
 
+async function deleteFolderPost(req, res) {
+  const folderId = Number(req.body.selectedForDeletion);
+  await deleteFolder(folderId);
+  res.redirect('/files');
+
+}
+
 export {
   getSignInView,
   getSignUpView,
@@ -126,6 +133,7 @@ export {
   createFolderPost,
   // showFoldersInFilesView,
   editFolderNamePost,
+  deleteFolderPost,
 
 }
 
