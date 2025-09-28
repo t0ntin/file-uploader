@@ -1,4 +1,4 @@
-import {addNewUserToDB, getFilesFromDB, findFileById, createFolderInDB, getFoldersFromDb } from '../db/user.js';
+import {addNewUserToDB, getFilesFromDB, findFileById, createFolderInDB, getFoldersFromDb, getRootFiles, getRootFolders, getSubFolders, getFilesInSelectedFolder, getSelectedFolderId, editFolderName } from '../db/user.js';
 import { body, validationResult } from "express-validator";
 import passport from 'passport';
 
@@ -41,10 +41,49 @@ async function getUploadView(req, res) {
 };
 
 async function getFilesView(req, res) {
-  const files = await getFilesFromDB(); 
-  const folders = await getFoldersFromDb();
-  res.render('files', {title: 'Your files:', message: null,  files, folders})
+  // const allFiles = await getFilesFromDB(); 
+  // const rootFolders = await getRootFolders(req.user.id);
+  // const rootFiles = await getRootFiles(req.user.id);
+  // const filesInSelectedFolder = await getFilesInSelectedFolder(Number(req.params.id));
+  // const selectedFolder = await getSelectedFolderId(Number(req.params.id));
+  let rootFolders = [];
+  let rootFiles = [];
+  let subFolders = [];
+  let filesInSelectedFolder = [];
+  let selectedFolder = null;
+  
+  if (req.params.id) {
+    // CASE 2: Inside a folder
+    const folderId = Number(req.params.id);
+     selectedFolder = await getSelectedFolderId(folderId);
+
+    // Files inside this folder
+     filesInSelectedFolder = await getFilesInSelectedFolder(folderId);
+
+    // Subfolders inside this folder
+     subFolders = await getSubFolders(folderId);
+
+  } else {
+    // CASE 1: Root
+     rootFolders = await getRootFolders(req.user.id);
+     rootFiles = await getRootFiles(req.user.id);
+  }
+  // console.log('this is selectedfolder: ', selectedFolder);
+  res.render('files', {title: 'Your files:', message: null,  rootFiles, rootFolders, subFolders, filesInSelectedFolder, selectedFolder})
 }
+
+
+
+// async function showFoldersInFilesView(req, res) {
+//   const files = await getFilesFromDB(); 
+//   const rootFolders = await getRootFolders(req.user.id);
+//   const allFolders = await getFoldersFromDb();
+//   const rootFiles = await getRootFiles(req.user.id);
+//   const subFolders = await getSubFolders(Number(req.params.id));
+//   const filesInSelectedFolder = await getFilesInSelectedFolder(Number(req.params.id));
+//   console.log('selected files', filesInSelectedFolder);
+//   res.render('files', {title: 'Your files:', message: null, rootFiles, rootFolders, subFolders, filesInSelectedFolder})
+// }
 
 async function downloadFile(req, res) {
   const file = await findFileById(Number(req.body.id));
@@ -53,14 +92,21 @@ async function downloadFile(req, res) {
 }
 
 async function createFolderPost(req, res) {
-  console.log('this is req.body: ', req.body);
-  const parentId = req.body.parentId || null;
+  console.log('this is req.params.parentId: ', req.params.parentId);
+  const parentId = Number(req.params.id) || null;
   const ownerId = req.user.id;
   const files = await getFilesFromDB(); 
+  const selectedFolder =  await getSelectedFolderId(parentId);
   await createFolderInDB(ownerId, parentId, req.body.newFolderName);
   const folders = await getFoldersFromDb();
-  console.log(folders);
-  res.render('files', {title: 'Your files:', message: 'Folder created', files, folders})
+  // console.log(folders);
+  res.render('files', {title: 'Your files:', message: 'Folder created', rootFiles: null, rootFolders: null, subFolders: null, filesInSelectedFolder: null, selectedFolder})
+}
+
+async function editFolderNamePost(req, res) {
+  const selectedFolder = Number(req.body.selectedFolder);
+  await editFolderName(Number(req.body.folderId), req.body.editedFolderName);
+  res.redirect(`/files/${selectedFolder}`)
 }
 
 export {
@@ -73,6 +119,8 @@ export {
   downloadFile,
   getFilesView,
   createFolderPost,
+  // showFoldersInFilesView,
+  editFolderNamePost,
 
 }
 

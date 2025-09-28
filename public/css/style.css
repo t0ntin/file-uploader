@@ -140,7 +140,7 @@ button:hover {
 }
 
 ul {
-  border: 1px solid darkgray;
+  /* border: 1px solid darkgray; */
   margin: 0 0 5px 0;
 }
 
@@ -172,4 +172,43 @@ li {
 
 .create-folder-form input {
   margin: 5px 0;
+}
+
+input[type="file"]::file-selector-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+input[type="file"]::file-selector-button:hover {
+  opacity: .8;;
+}
+
+.edit-folder-form {
+  display: none;
+  position: absolute;
+  top: 40%;
+  z-index: 2;
+}
+
+.visible {
+  display: block;
+}
+
+.overlay {
+  width: 0;
+  display: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.overlay-visible {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: .7;
+  background-color: rgb(0, 0, 0);
 }

@@ -86,6 +86,97 @@ async function getFoldersFromDb() {
   }
 }
 
+async function getRootFolders(id) {
+  try {
+    const rootFolders = await prisma.folder.findMany({
+      where: {
+        ownerId: id,
+        parentId: null,
+      }
+    })
+    return rootFolders;
+  } catch (error) {
+    console.error('Error retrieving root folders', error);
+    throw error;
+  }
+
+}
+
+async function getRootFiles(id) {
+  try {
+    const rootFiles = await prisma.file.findMany( {
+      where: {
+        ownerId: id,
+        folderId: null,
+      }
+    })
+    return rootFiles;
+  } catch (error) {
+    console.error('Error retrieving root files', error);
+    throw error;
+  }
+}
+
+async function getSubFolders (id) {
+  try {
+    const subFolders = await prisma.folder.findMany( {
+      where: {
+        parentId: id,
+      }
+    });
+    return subFolders;
+  } catch (error) {
+    console.error('Error retrieving subfolders', error);
+    throw error;
+  }
+}
+
+async function getFilesInSelectedFolder(id) {
+  try {
+      const filesInSelectedFolder = await prisma.file.findMany({
+    where: {
+      folderId: id,
+    }
+  })
+  return filesInSelectedFolder;
+  } catch (error) {
+    console.error('Error inside getFilesInSelectedFolder', error);
+    throw error;
+  }
+}
+
+async function getSelectedFolderId(id) {
+  const folderId = Number(id);
+  if (!Number.isInteger(folderId)) return null;
+
+  try {
+    const selectedFolder = await prisma.folder.findUnique({
+      where: { id: folderId }
+    });
+    return selectedFolder;
+  } catch (error) {
+    console.error('Error inside getSelectedFolderId', error);
+    throw error;
+  }
+}
+
+async function editFolderName(id, editedFolderName) {
+  try {
+    const newName = await prisma.folder.update({
+      where: {
+        id:id,
+      },
+      data: {
+        name: editedFolderName,
+      }
+    });
+    return newName;
+  } catch (error) {
+    console.error('Error at editFolderName', error);
+    throw error;
+  }
+}
+
 export {
   addNewUserToDB,
   storeFileInfoInDB, 
@@ -93,5 +184,11 @@ export {
   findFileById,
   createFolderInDB,
   getFoldersFromDb,
+  getRootFolders,
+  getRootFiles,
+  getSubFolders,
+  getFilesInSelectedFolder, 
+  getSelectedFolderId,
+  editFolderName,
 
 }
