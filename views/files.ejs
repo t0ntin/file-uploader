@@ -41,8 +41,10 @@
       <h3>Folders</h3>
       <ul>
         <% rootFolders.forEach((rootFolder) => { %>
-          <li>
+          <li class="folder-link-and-edit-button-container">
             <a href="/files/<%= rootFolder.id %>"><%= rootFolder.name %></a>
+            <button class="edit-name-button" type="button">Edit</button>
+            <input type="hidden" value="<%= rootFolder.id%>">
           </li>
         <% }) %>
       </ul>
@@ -85,7 +87,10 @@
     <form class="edit-folder-form" action="/edit-folder-name" method="POST">
       <input type="text" id="edited-folder-name" name="editedFolderName" placeholder="Enter new name">
       <input type="hidden" name="folderId">
-      <input type="hidden" name="selectedFolder" value="<%= selectedFolder.id%>">
+      <% if (selectedFolder) { %>
+
+        <input type="hidden" name="selectedFolder" value="<%= selectedFolder.id %>">
+      <% } %>
       <button type="submit">Edit</button>
     </form>
     <div class="overlay"></div>
@@ -93,20 +98,28 @@
 
 </body>
 <script>
-const editNameButtonEls = document.querySelectorAll('.edit-name-button');
-  editNameButtonEls.forEach((button) => {
-    button.addEventListener('click', openEditDialogue);
-    
+  const overlayEl = document.querySelector('.overlay');
+  const editFolderFormEl = document.querySelector('.edit-folder-form');
+  const editNameButtonEls = document.querySelectorAll('.edit-name-button');
+    editNameButtonEls.forEach((button) => {
+      button.addEventListener('click', openEditDialogue);
+      
   });
 
-function openEditDialogue(e) {
-  const overlayEl = document.querySelector('.overlay');
-  const editFolderFormEl = document.querySelector('.edit-folder-form')
-  const subFolderId = e.target.parentElement.querySelector('input[type="hidden"]').value;
-  const hiddenInputEl = editFolderFormEl.querySelector('input[type="hidden"');
-  hiddenInputEl.value = subFolderId;
-  editFolderFormEl.classList.toggle('visible');
-  overlayEl.classList.toggle('overlay-visible');
-}
+  function openEditDialogue(e) {
+    
+    const subFolderId = e.target.parentElement.querySelector('input[type="hidden"]').value;
+    const hiddenInputEl = editFolderFormEl.querySelector('input[type="hidden"');
+    hiddenInputEl.value = subFolderId;
+    editFolderFormEl.classList.toggle('visible');
+    overlayEl.classList.toggle('overlay-visible');
+  }
+
+  overlayEl.addEventListener('click', ()=> {
+    overlayEl.classList.toggle('overlay-visible');
+    editFolderFormEl.classList.toggle('visible');
+
+  });
+
 </script>
 </html>

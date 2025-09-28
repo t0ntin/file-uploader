@@ -68,7 +68,7 @@ async function getFilesView(req, res) {
      rootFolders = await getRootFolders(req.user.id);
      rootFiles = await getRootFiles(req.user.id);
   }
-  // console.log('this is selectedfolder: ', selectedFolder);
+  console.log('this is selectedfolder: ', selectedFolder);
   res.render('files', {title: 'Your files:', message: null,  rootFiles, rootFolders, subFolders, filesInSelectedFolder, selectedFolder})
 }
 
@@ -106,8 +106,13 @@ async function createFolderPost(req, res) {
 async function editFolderNamePost(req, res) {
   const selectedFolder = Number(req.body.selectedFolder);
   await editFolderName(Number(req.body.folderId), req.body.editedFolderName);
-  res.redirect(`/files/${selectedFolder}`)
-}
+  
+  if (isNaN(selectedFolder)) {
+    res.redirect('/files');
+  } else {
+    res.redirect(`/files/${selectedFolder}`);
+  }
+};
 
 export {
   getSignInView,

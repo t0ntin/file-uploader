@@ -84,11 +84,7 @@ form {
   align-items: center;
 }
 
-/* .form-for-button {
-  box-shadow: none;
-  background-color: rgba(255, 255, 255, 0);
-  padding: 0;
-} */
+
 
 label {
   display: block;
@@ -110,9 +106,6 @@ textarea {
   font-size: 1rem;
 }
 
-textarea {
-  /* resize: vertical; */
-}
 
 input:focus,
 textarea:focus {
@@ -146,6 +139,19 @@ ul {
 
 li {
   color: red;
+}
+
+.folder-link-and-edit-button-container {
+  display: flex;
+  font-weight: normal;
+  gap: 10px;
+  margin-top: 3px;
+}
+
+.edit-name-button {
+  padding: 2px 6px;
+  width: auto;
+
 }
 
 .download-form {
