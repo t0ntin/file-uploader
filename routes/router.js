@@ -13,7 +13,7 @@ router.post('/sign-in', signInPost);
 
 router.get('/drive', getDriveView);
 
-router.get('/upload', getUploadView);
+// router.get('/upload', getUploadView);
 
 router.post('/download', downloadFile);
 

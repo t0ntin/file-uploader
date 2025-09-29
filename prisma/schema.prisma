@@ -27,6 +27,7 @@ model File {
   fileName   String    @db.VarChar(255)
   fileSize   BigInt
   mimeType   String?
+  url        String?   @db.VarChar(500)
   uploadedAt DateTime  @default(now())
   folder     Folder?   @relation(fields: [folderId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   owner      User      @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)

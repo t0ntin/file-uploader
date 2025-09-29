@@ -51,22 +51,24 @@ async function getFilesView(req, res) {
   let subFolders = [];
   let filesInSelectedFolder = [];
   let selectedFolder = null;
-  
+
   if (req.params.id) {
     // CASE 2: Inside a folder
-    const folderId = Number(req.params.id);
-     selectedFolder = await getSelectedFolderId(folderId);
+    const folderId = req.params.id ? Number(req.params.id) : null;
+
+    console.log('This is folderId:', folderId);
+
+    selectedFolder = await getSelectedFolderId(folderId);
 
     // Files inside this folder
-     filesInSelectedFolder = await getFilesInSelectedFolder(folderId);
+    filesInSelectedFolder = await getFilesInSelectedFolder(folderId);
 
     // Subfolders inside this folder
-     subFolders = await getSubFolders(folderId);
-
+    subFolders = await getSubFolders(folderId);
   } else {
     // CASE 1: Root
-     rootFolders = await getRootFolders(req.user.id);
-     rootFiles = await getRootFiles(req.user.id);
+    rootFolders = await getRootFolders(req.user.id);
+    rootFiles = await getRootFiles(req.user.id);
   }
   console.log('this is selectedfolder: ', selectedFolder);
   res.render('files', {title: 'Your files:', message: null,  rootFiles, rootFolders, subFolders, filesInSelectedFolder, selectedFolder})

@@ -1,21 +1,23 @@
+import dotenv from "dotenv";
+dotenv.config();
+import "./config/cloudinary.js";
+import { v2 as cloudinary } from 'cloudinary';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import pool from './db/pool.js';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import session from 'express-session';
 import connectPgSimple from "connect-pg-simple";
 import router from './routes/router.js';
 import bcrypt from 'bcryptjs';
-import dotenv from "dotenv";
-dotenv.config();
+
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import multer from 'multer';
-
+import fs from 'fs';
 import pkg from "@prisma/client";
-import { storeFileInfoInDB } from './db/user.js';
+// import { storeFileInfoInDB } from './db/user.js';
 const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
 console.log("Prisma ready!");
@@ -93,6 +95,7 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
+
 app.use('/', router);
 
 const storage = multer.diskStorage({
@@ -104,16 +107,62 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+// const upload = multer({ storage }); THIS WAS USED TO UPLOAD FILES TO MY COMP.
 
-app.post('/upload/:folderId', upload.single('file'), async (req, res) => {
-  console.log('this is req.file: ', req.file);
-  // console.log('this is req.user: ', req.user);
-  console.log('this is req params: ', req.params.folderId);
-  const folderId = Number(req.params.folderId);
-  await storeFileInfoInDB(req.user.id, folderId, req.file.originalname, req.file.mimetype, req.file.size);
-  res.redirect('/files');
+// app.post('/upload/:folderId', upload.single('file'), async (req, res) => {
+//   console.log('this is req.file: ', req.file);
+//   // console.log('this is req.user: ', req.user);
+//   console.log('this is req params: ', req.params.folderId);
+//   const folderId = Number(req.params.folderId);
+//   await storeFileInfoInDB(req.user.id, folderId, req.file.originalname, req.file.mimetype, req.file.size);
+//   res.redirect('/files');
+// });
+// Multer config (keeps files in /tmp until uploaded to Cloudinary)
+const upload = multer({ dest: 'tmp/' });
+
+app.post('/upload', upload.single('file'), async (req, res) => {
+  try {
+    console.log('testing inside upload route');
+    // Get folder ID from hidden input
+    const folderId = req.body.folderId ? Number(req.body.folderId) : null;
+
+    // Upload file to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'Files', // optional
+    });
+
+    // Delete temp file
+    fs.unlinkSync(req.file.path);
+    console.log('folderId from body:', req.body.folderId);
+
+    // Save file info in DB
+    await prisma.file.create({
+      data: {
+        ownerId: req.user.id,
+        folderId: folderId,
+        fileName: req.file.originalname,
+        fileSize: BigInt(req.file.size),
+        mimeType: req.file.mimetype,
+        url: result.secure_url,
+      },
+    });
+
+    // Redirect to correct folder
+    if (folderId === null) {
+      res.redirect('/files');
+    } else {
+      res.redirect(`/files/${folderId}`);
+    }
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).send('Upload failed');
+  }
 });
+
+
+
+
+
 
 app.use((req, res) => {
   res.status(404).render('404');
