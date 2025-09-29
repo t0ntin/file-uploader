@@ -13,28 +13,26 @@
 
     <form action="<%= selectedFolder ? `/files/${selectedFolder.id}` : '/files' %>" method="POST">
       <input id="newFolderName" type="text" name="newFolderName" value="" placeholder="New folder name">
-
       <%- include('./partials/flashmsgs.ejs')%>
-
       <button type="submit">Create Folder</button>
     </form>
 
     <% if (rootFiles) { %>
       <% rootFiles.forEach((file) => { %>
-        <ul>
+        <ul class="file-name-and-download-button-cantainer">
           <li><%=file.fileName %></li> <li>
-            <li><%=`${file.fileSize / BigInt(1024)} kb`%></li>
-            <li><%=file.mimeType %></li>
-            <li><%=file.uploadedAt.toLocaleString() %></li>
+
             <form class="download-form" action="/download" method="POST">
               <input type="hidden" name="id" value="<%= file.id%>">
-              <button type="submit">Download</button>
+              <button class="download-button" type="submit">
+                <img class="download-img" src="/images/download.svg" alt="">
+              </button>
             </form></li>
         </ul>
       <% }) %>
     <% } %>
 
-    
+
     <a href="/files">Back to root</a>
     
     <% if (rootFolders && rootFolders.length > 0) { %>

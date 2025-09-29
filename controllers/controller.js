@@ -1,4 +1,4 @@
-import {addNewUserToDB, getFilesFromDB, findFileById, createFolderInDB, getFoldersFromDb, getRootFiles, getRootFolders, getSubFolders, getFilesInSelectedFolder, getSelectedFolderId, editFolderName, deleteFolder } from '../db/user.js';
+import {addNewUserToDB, getFilesFromDB, getUrl, createFolderInDB, getFoldersFromDb, getRootFiles, getRootFolders, getSubFolders, getFilesInSelectedFolder, getSelectedFolderId, editFolderName, deleteFolder } from '../db/user.js';
 import { body, validationResult } from "express-validator";
 import passport from 'passport';
 
@@ -88,9 +88,9 @@ async function getFilesView(req, res) {
 // }
 
 async function downloadFile(req, res) {
-  const file = await findFileById(Number(req.body.id));
-
-
+  const url = await getUrl(Number(req.body.id));
+  console.log(url);
+  res.redirect(url);
 }
 
 async function createFolderPost(req, res) {

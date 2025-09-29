@@ -56,13 +56,13 @@ async function getFilesFromDB() {
 
 }
 
-async function findFileById(id) {
+async function getUrl(id) {
  const file = await prisma.file.findUnique({
   where: {
     id:id
   }
  })
- return file;
+ return file.url;
 }
 
 async function createFolderInDB(ownerId, parentId, newFolderName) {
@@ -196,7 +196,7 @@ export {
   addNewUserToDB,
   storeFileInfoInDB, 
   getFilesFromDB,
-  findFileById,
+  getUrl,
   createFolderInDB,
   getFoldersFromDb,
   getRootFolders,
