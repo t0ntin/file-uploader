@@ -94,16 +94,29 @@ async function downloadFile(req, res) {
 }
 
 async function createFolderPost(req, res) {
-  console.log('this is req.params.parentId: ', req.params.parentId);
-  const parentId = Number(req.params.id) || null;
-  const ownerId = req.user.id;
-  const files = await getFilesFromDB(); 
-  const selectedFolder =  await getSelectedFolderId(parentId);
-  await createFolderInDB(ownerId, parentId, req.body.newFolderName);
-  const folders = await getFoldersFromDb();
-  // console.log(folders);
-  res.render('files', {title: 'Your files:', message: 'Folder created', rootFiles: null, rootFolders: null, subFolders: null, filesInSelectedFolder: null, selectedFolder})
+  try {
+    const parentId = req.params.id ? Number(req.params.id) : null;
+    const ownerId = req.user.id;
+    const { newFolderName } = req.body;
+
+    if (!newFolderName) {
+      req.flash('error', 'Folder name is required');
+      return res.redirect(parentId ? `/files/${parentId}` : '/files');
+    }
+
+    await createFolderInDB(ownerId, parentId, newFolderName);
+    
+    req.flash('success', 'Folder created successfully');
+    res.redirect(parentId ? `/files/${parentId}` : '/files');
+    
+  } catch (error) {
+    console.error('Error creating folder:', error);
+    req.flash('error', 'Error creating folder');
+    const parentId = req.params.id ? Number(req.params.id) : null;
+    res.redirect(parentId ? `/files/${parentId}` : '/files');
+  }
 }
+
 
 async function editFolderNamePost(req, res) {
   const selectedFolder = Number(req.body.selectedFolder);
@@ -117,10 +130,11 @@ async function editFolderNamePost(req, res) {
 };
 
 async function deleteFolderPost(req, res) {
+  console.log('this is parent id: ', req.body.parentId);
+  const parentId = req.body.parentId ? Number(req.body.parentId) : null;
   const folderId = Number(req.body.selectedForDeletion);
   await deleteFolder(folderId);
-  res.redirect('/files');
-
+  res.redirect(parentId ? `/files/${parentId}` : '/files');
 }
 
 export {

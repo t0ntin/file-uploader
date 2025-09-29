@@ -20,8 +20,8 @@ router.post('/download', downloadFile);
 router.get('/files', getFilesView);
 router.get('/files/:id', getFilesView);
 // router.get('/files/:id', showFoldersInFilesView);
-
-router.post('/files/:id/create-folder', createFolderPost);
+router.post('/files', createFolderPost); 
+router.post('/files/:id', createFolderPost);
 
 router.post('/edit-folder-name', editFolderNamePost);
 

@@ -4,20 +4,20 @@
   <%- include('./partials/head.ejs')%>
 
   <link rel="stylesheet" href="/css/style.css">
-  <!-- <script src="./js/script.js"defer></script> -->
+  <script src="/js/files.js"defer></script>
   <title>Files</title>
 </head>
 <body>
   <main>
     <h1><%=title %></h1>
 
-    <form action="/files/<%= selectedFolder ? selectedFolder.id : 0 %>/create-folder" method="POST">
-        <input id="newFolderName" type="text" name="newFolderName" value="" placeholder="New folder name">
-        <% if (message) { %>
-          <h3><%= message %></h3>
-          <% } %>
-        <button type="submit">Create Folder</button>
-      </form>
+    <form action="<%= selectedFolder ? `/files/${selectedFolder.id}` : '/files' %>" method="POST">
+      <input id="newFolderName" type="text" name="newFolderName" value="" placeholder="New folder name">
+
+      <%- include('./partials/flashmsgs.ejs')%>
+
+      <button type="submit">Create Folder</button>
+    </form>
 
     <% if (rootFiles) { %>
       <% rootFiles.forEach((file) => { %>
@@ -47,7 +47,7 @@
             <button class="delete-folder-button" type="button">
               <img class="trash-icon" src="/images/trash.svg" alt="">
             </button>
-            <input class="hidden-input" type="hidden" value="<%= rootFolder.id%>">
+            <input class="hidden-input-root-folders" type="hidden" value="<%= rootFolder.id%>">
           </li>
         <% }) %>
       </ul>
@@ -59,10 +59,13 @@
       <h3>Subfolders in <%= selectedFolder.name %></h3>
       <ul>
         <% subFolders.forEach((subFolder) => { %>
-          <li>
+          <li class="folder-link-and-edit-button-container">
             <a href="/files/<%= subFolder.id %>"><%= subFolder.name %></a>
             <button class="edit-name-button" type="button">Edit</button>
-            <input type="hidden" value="<%= subFolder.id%>">
+            <button class="delete-folder-button" type="button">
+              <img class="trash-icon" src="/images/trash.svg" alt="">
+            </button>
+            <input class="hidden-input-sub-folders" type="hidden" value="<%= subFolder.id%>">
           </li>
         <% }) %>
       </ul>
@@ -80,9 +83,7 @@
     
     <form action="/upload" method="POST" enctype="multipart/form-data">
       <input type="file" name="file" required>
-      <% if (message) { %>  
-        <h3><%= message %></h3>
-      <% } %>
+
       <input type="hidden" name="folderId" value="<%= selectedFolder ? selectedFolder.id : '' %>">
       <button type="submit">Upload</button>
     </form>
@@ -101,7 +102,8 @@
 
     <form class="delete-folder-form" action="/delete-folder"  method="POST">
       <p>Are you sure?</p>
-      <input class="hidden-input-in-delete-folder-form" type="hidden" name="selectedForDeletion" value="">
+      <input class="hidden-input-in-delete-folder-form" type="hidden" name="selectedForDeletion" > 
+      <input type="hidden" name="parentId" value="<%= selectedFolder ? selectedFolder.id : '' %>">
       <button type="submit">Delete</button>
     </form>
 
@@ -110,58 +112,6 @@
 
 </body>
 <script>
-  const overlayEl = document.querySelector('.overlay');
-  const editFolderFormEl = document.querySelector('.edit-folder-form');
-  const hiddenInputInForm = document.querySelector('.hidden-input-in-edit-folder-form');
-  const editNameButtonEls = document.querySelectorAll('.edit-name-button');
-  const deleteFolderButtonEls = document.querySelectorAll('.delete-folder-button');
-  const deleteFolderFormEl = document.querySelector('.delete-folder-form');
-  const hiddenInput = document.querySelector('.hidden-input');
-  const hiddenInputInDeleteForm = document.querySelector('.hidden-input-in-delete-folder-form');
-
-    editNameButtonEls.forEach((button) => {
-      button.addEventListener('click', openEditDialogue);
-      
-  });
-
-  function openEditDialogue(e) {
-    const button = e.target.closest('.edit-name-button');
-    const folderId = button.parentElement.querySelector('.hidden-input').value;
-    // console.log(folderId);
-    hiddenInputInForm.value = folderId;
-    // console.log(hiddenInputInForm.value);
-    editFolderFormEl.classList.toggle('visible');
-    overlayEl.classList.toggle('overlay-visible');
-  }
-
-  overlayEl.addEventListener('click', ()=> {
-    // overlayEl.classList.toggle('overlay-visible');
-    // editFolderFormEl.classList.toggle('visible');
-    if (editFolderFormEl.classList.contains('visible')) {
-    editFolderFormEl.classList.remove('visible');
-    overlayEl.classList.remove('overlay-visible');
-  }
-  
-  if (deleteFolderFormEl.classList.contains('visible')) {
-    deleteFolderFormEl.classList.remove('visible');
-    overlayEl.classList.remove('overlay-visible');
-  }
-
-  });
-
-  deleteFolderButtonEls.forEach((button) => {
-    button.addEventListener('click', deleteFolder);
-  });
-
-  function deleteFolder(e) {
-    const button = e.target.closest('.delete-folder-button');
-    const folderId = button.parentElement.querySelector('.hidden-input').value;
-    // console.log(folderId);
-    hiddenInputInDeleteForm.value = folderId;
-    console.log(hiddenInputInDeleteForm.value);
-    deleteFolderFormEl.classList.toggle('visible');
-    overlayEl.classList.toggle('overlay-visible');
-  }
 
 </script>
 </html>

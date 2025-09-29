@@ -35,3 +35,10 @@ const prisma = new PrismaClient();
 //   }
 // });
 
+// await prisma.folder.deleteMany({
+//   where: {
+//     id: {
+//       not: 2,  
+//     }
+//   }
+// });

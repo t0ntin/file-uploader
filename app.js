@@ -3,6 +3,7 @@ dotenv.config();
 import "./config/cloudinary.js";
 import { v2 as cloudinary } from 'cloudinary';
 import express from 'express';
+import flash from 'connect-flash';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -51,6 +52,13 @@ app.use(session({
   },
 
 }));
+
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.messages = req.flash();
+  next();
+});
 
 app.use(passport.initialize());
 app.use(passport.session());
