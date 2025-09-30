@@ -11,36 +11,48 @@
   <main>
     <h1><%=title %></h1>
 
-    <form action="<%= selectedFolder ? `/files/${selectedFolder.id}` : '/files' %>" method="POST">
-      <input id="newFolderName" type="text" name="newFolderName" value="" placeholder="New folder name">
-      <%- include('./partials/flashmsgs.ejs')%>
-      <button type="submit">Create Folder</button>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+      <input type="file" name="file" required>
+
+      <input type="hidden" name="folderId" value="<%= selectedFolder ? selectedFolder.id : '' %>">
+      <button type="submit">Upload</button>
     </form>
 
+
+
+
     <% if (rootFiles) { %>
+      <h3>Files in root:</h3>
       <% rootFiles.forEach((file) => { %>
         <ul class="file-name-and-download-button-cantainer">
-          <li><%=file.fileName %></li> <li>
+          <li><%=file.fileName %></li>
+          <form class="download-form" action="/download" method="POST">
+            <input type="hidden" name="id" value="<%= file.id%>">
+            <button class="download-button" type="submit">
+              <img class="download-img" src="/images/download.svg" alt="">
+            </button>
+          </form>
 
-            <form class="download-form" action="/download" method="POST">
-              <input type="hidden" name="id" value="<%= file.id%>">
-              <button class="download-button" type="submit">
-                <img class="download-img" src="/images/download.svg" alt="">
-              </button>
-            </form></li>
+          <form class="delete-file-form" action="/delete-file" method="POST">
+            <button class="delete-folder-button" type="submit">
+              <img class="trash-icon" src="/images/trash.svg" alt="">
+            </button>
+            <input type="hidden" name="id" value="<%= file.id %>"> 
+            <input type="hidden" name="folderId" value="<%= file.folderId %>">
+          </form>
+
         </ul>
       <% }) %>
     <% } %>
 
 
-    <a href="/files">Back to root</a>
     
     <% if (rootFolders && rootFolders.length > 0) { %>
       <h3>Folders</h3>
       <ul>
         <% rootFolders.forEach((rootFolder) => { %>
           <li class="folder-link-and-edit-button-container">
-            <a href="/files/<%= rootFolder.id %>"><%= rootFolder.name %></a>
+            <a class="folder-link" href="/files/<%= rootFolder.id %>"><%= rootFolder.name %></a>
             <button class="edit-name-button" type="button">Edit</button>
             <button class="delete-folder-button" type="button">
               <img class="trash-icon" src="/images/trash.svg" alt="">
@@ -77,16 +89,16 @@
         <% }) %>
       </ul>
     <% } %>
-    
-    
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-      <input type="file" name="file" required>
 
-      <input type="hidden" name="folderId" value="<%= selectedFolder ? selectedFolder.id : '' %>">
-      <button type="submit">Upload</button>
+    <form action="<%= selectedFolder ? `/files/${selectedFolder.id}` : '/files' %>" method="POST">
+      <input id="newFolderName" type="text" name="newFolderName" value="" placeholder="New folder name">
+      <%- include('./partials/flashmsgs.ejs')%>
+      <button type="submit">Create Folder</button>
     </form>
-    
-    
+
+    <a href="/files">Back to root</a>
+        
+
     <form class="edit-folder-form" action="/edit-folder-name" method="POST">
       <input type="text" id="edited-folder-name" name="editedFolderName" placeholder="Enter new name">
       <input class="hidden-input-in-edit-folder-form" type="hidden" name="folderId">
