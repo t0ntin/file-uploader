@@ -89,7 +89,6 @@ async function getFilesView(req, res) {
 
 async function downloadFile(req, res) {
   const url = await getUrl(Number(req.body.id));
-  console.log(url);
   res.redirect(url);
 }
 
@@ -137,6 +136,12 @@ async function deleteFolderPost(req, res) {
   res.redirect(parentId ? `/files/${parentId}` : '/files');
 }
 
+async function getDetailsView (req, res) {
+  const files = await getFilesFromDB();
+
+  res.render('details', {title: 'All file details:', files})
+}
+
 export {
   getSignInView,
   getSignUpView,
@@ -150,6 +155,7 @@ export {
   // showFoldersInFilesView,
   editFolderNamePost,
   deleteFolderPost,
+  getDetailsView,
 
 }
 

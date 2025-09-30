@@ -148,10 +148,12 @@ li {
 }
 
 .folder-link-and-edit-button-container {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 40px 30px;
   font-weight: normal;
   gap: 10px;
   margin-top: 3px;
+  max-width: 300px;
 }
 
 .edit-name-button {
@@ -223,7 +225,7 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .trash-icon {
-  width: 15px;
+  width: 20px;
 }
 
 .visible {
@@ -253,4 +255,30 @@ input[type="file"]::file-selector-button:hover {
 
 .download-img {
   width: 15px;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 20px 0;
+  width: 100%;
+  max-width: 400px;
+  background-color: #1a1a1a;
+  color: #f0f0f0;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+td {
+  border: 1px solid #444;
+  padding: .5em;
+  transition: background-color 0.2s ease;
+}
+
+tr:first-child td:first-child {
+  background-color: #007bff;
+  font-weight: bold;
+}
+
+td:hover {
+  background-color: #333;
 }

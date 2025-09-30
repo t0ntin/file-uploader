@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/head.ejs')%>
+
+  <link rel="stylesheet" href="./css/style.css">
+  <!-- <script src="./js/script.js"defer></script> -->
+  <title>File details</title>
+</head>
+<body>
+  <main>
+    <h1><%=title %></h1>
+
+    <% if (files) { %>
+      <% files.forEach((file) => { %>
+        <table class="details-table">
+          <tr>
+            <td><%=file.fileName %></td>
+            <td><%=`${file.fileSize / BigInt(1024)} kb`%></td>
+          </tr>
+          <tr>
+            <td><%=file.mimeType %></td>
+            <td><%=file.uploadedAt.toLocaleString() %></td>
+          </tr>
+        </table>
+      <% }) %>
+    <% } %>
+  </main>
+
+
+</body>
+</html>
