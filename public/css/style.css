@@ -145,10 +145,28 @@ li {
   color: red;
 }
 
-.file-name-and-download-button-cantainer {
-  margin: 0 0 15px 0;
+.root-folders-container {
+  margin: 0 0 15px 0;  
+}
+
+.upload-form {
+  position: absolute;
+  top: 40%;
+  z-index: 2;
+  opacity: 0;
+  transition:opacity 0.2s ease-in;
+}
+
+.upload-button {
+  width: auto;
+  padding: 1em, 1.5em;
+  margin-bottom: 10px;
+}
+
+.file-name-and-download-button-container {
+  margin: 0 0 5px 0;
   align-items: center;
-  background-color: #1f1f1f;
+  background-color: #2c2c2c;
   padding: .3em .5em;
   border-radius: 5px;
   display: grid;
@@ -156,14 +174,15 @@ li {
   gap: 5px;
 }
 
+.file-name {
+  color: white;
+}
+
 .download-form .download-button {
   padding: 6px 6px;
   background-color: #007bff;
   width: auto;
-
-
 }
-
 
 .download-form, .delete-file-form{
   max-width: 600px;
@@ -182,7 +201,7 @@ li {
   gap: 10px;
   margin-top: 3px;
   max-width: 300px;
-  background-color: #1f1f1f;
+  background-color: #2c2c2c;
   padding: .3em .5em;
   border-radius: 5px;
 
@@ -236,17 +255,25 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .edit-folder-form {
-  display: none;
+  /* display: none; */
   position: absolute;
   top: 40%;
   z-index: 2;
+  opacity: 0;
+  transition:opacity 0.2s ease-in;
 }
 
 .delete-folder-form {
-  display: none;
+  /* display: none; */
   position: absolute;
   top: 40%;
   z-index: 2;
+  opacity: 0;
+  transition:opacity 0.2s ease-in;
+}
+
+.delete-folder-form  p {
+margin-bottom: 10px;
 }
 
 .trash-icon {
@@ -254,7 +281,8 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .visible {
-  display: block;
+  /* display: block; */
+  opacity: 1;
 }
 
 .overlay {
@@ -273,9 +301,12 @@ input[type="file"]::file-selector-button:hover {
 }
 
 
-
 .download-img {
   width: 15px;
+}
+
+.file-details-link {
+  margin: 0 0 1em 0;
 }
 
 table {
@@ -303,3 +334,4 @@ tr:first-child td:first-child {
 td:hover {
   background-color: #333;
 }
+

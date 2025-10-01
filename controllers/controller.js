@@ -2,11 +2,22 @@ import {addNewUserToDB, getFilesFromDB, getUrl, createFolderInDB, getFoldersFrom
 import { body, validationResult } from "express-validator";
 import passport from 'passport';
 
+
+
 function getSignInView(req, res) {
   console.log('this is req.user: ', req.user);
   const user = req.user;
   res.render('index', {title: "Sign in", user})
 }
+
+const validateSignUp = [
+  body("firstName").trim().notEmpty().withMessage("First name is required"),
+  body("lastName").trim().notEmpty().withMessage("Last name is required"),
+  body("email").trim().isEmail().withMessage("Enter a valid email").normalizeEmail(),
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long"),
+];
 
 function getSignUpView(req, res) {
   res.render('sign-up', {title: "Sign up"})
@@ -23,13 +34,54 @@ async function signUpPost(req, res, next) {
   }
 };
 
-async function signInPost(req, res, next) {
-  passport.authenticate('local', {
-    successRedirect: '/upload',
-    failureRedirect: '/',
-  })(req, res, next);
-  console.log('success');
-};
+const validateSignIn = [
+  body("email").trim().isEmail().withMessage("Enter a valid email").normalizeEmail(),
+  body("password")
+    .notEmpty()
+    .withMessage("Password is required"),
+];
+
+const signInPost = [
+  validateSignIn,
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).render("index", { 
+        title: "Sign in", 
+        user: req.user, 
+        oldInput: req.body, 
+        errors: errors.array(), 
+      });
+    }
+
+    passport.authenticate("local", (err, user, info) => {
+      if (err) return next(err);
+      
+      if (!user) {
+        // Render the same page with errors (no redirect)
+        return res.status(400).render("index", {
+          title: "Sign in",
+          user: req.user, 
+          oldInput: req.body,
+          errors: [{ msg: info.message || "Invalid email or password" }]
+        });
+      }
+
+      req.logIn(user, (err) => {
+        if (err) return next(err);
+        return res.redirect("/files");
+      });
+    })(req, res, next);
+  },
+];
+
+
+function getLogOut(req, res, next) {
+  req.logout((err) => {
+    if (err) return next(err);
+    res.redirect("/");
+  });
+}
 
 async function getDriveView(req, res) {
   res.render('drive', {title: 'Your Drive'})
@@ -143,10 +195,17 @@ async function getDetailsView(req, res) {
 }
 
 async function deleteFilePost(req, res) {
-  const parentId = req.body.parentId ? Number(req.body.parentId) : null;
-  const id = Number(req.body.id);
-  await deleteFile(id);
-  res.redirect(parentId ? `/files/${parentId}` : '/files');
+  try {
+
+    const parentId = req.body.parentId ? Number(req.body.parentId) : null;
+    const id = Number(req.body.id);
+    await deleteFile(id);
+    req.flash('success', 'File deleted')
+    res.redirect(parentId ? `/files/${parentId}` : '/files');
+  } catch (error) {
+      console.error('Error in deleteFile', error);
+      req.flash('error', 'Error deleting file');
+  }
 }
 
 export {
@@ -154,6 +213,7 @@ export {
   getSignUpView,
   signUpPost,
   signInPost,
+  getLogOut,
   getDriveView,
   getUploadView,
   downloadFile,

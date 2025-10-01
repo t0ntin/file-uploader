@@ -1,6 +1,8 @@
 
 
 const overlayEl = document.querySelector('.overlay');
+const uploadFormEl = document.querySelector('.upload-form');
+const uploadButtonEl = document.querySelector('.upload-button');
 const editFolderFormEl = document.querySelector('.edit-folder-form');
 const hiddenInputInForm = document.querySelector('.hidden-input-in-edit-folder-form');
 const editNameButtonEls = document.querySelectorAll('.edit-name-button');
@@ -9,6 +11,14 @@ const deleteFolderFormEl = document.querySelector('.delete-folder-form');
 const hiddenInput = document.querySelector('.hidden-input-root-folders');
 const hiddenInputInDeleteForm = document.querySelector('.hidden-input-in-delete-folder-form');
 
+// EVENT LISTENER FOR UPLOADING FILE
+uploadButtonEl.addEventListener('click', openUploadForm);
+
+function openUploadForm() {
+  uploadFormEl.classList.toggle('visible');
+  overlayEl.classList.toggle('overlay-visible');
+
+}
 
 // EVENT LISTENER FOR EDIT ROOT FOLDER BUTTONS
   editNameButtonEls.forEach((button) => {
@@ -92,4 +102,8 @@ overlayEl.addEventListener('click', ()=> {
     overlayEl.classList.remove('overlay-visible');
   }
 
+  if (uploadFormEl.classList.contains('visible')) {
+    uploadFormEl.classList.remove('visible');
+    overlayEl.classList.remove('overlay-visible');
+  }
 });

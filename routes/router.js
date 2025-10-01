@@ -1,10 +1,11 @@
 import express from 'express';
-import { getSignInView, getSignUpView, signUpPost, signInPost, getDriveView, getUploadView, downloadFile, getFilesView, createFolderPost, editFolderNamePost, deleteFolderPost, getDetailsView, deleteFilePost
+import { getSignInView, getSignUpView, signUpPost, signInPost, getDriveView, getUploadView, downloadFile, getFilesView, createFolderPost, editFolderNamePost, deleteFolderPost, getDetailsView, deleteFilePost, getLogOut
   // showFoldersInFilesView
 } from '../controllers/controller.js';
 const router = express.Router();
 
 router.get('/', getSignInView);
+router.get('/log-out', getLogOut);
 
 router.get('/sign-up', getSignUpView);
 router.post('/sign-up', signUpPost);

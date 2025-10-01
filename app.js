@@ -154,7 +154,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         url: result.secure_url,
       },
     });
-
+    req.flash('success', 'File uploaded successfully.')
     // Redirect to correct folder
     if (folderId === null) {
       res.redirect('/files');
