@@ -15,7 +15,7 @@
 
       <h1><%= title %></h1>
       <form action="/sign-in" method="POST">
-        <input type="email" name="email" id="email" value="<%= oldInput.email%>"  placeholder="Email" autocomplete="email">
+        <input type="email" name="email" id="email" value="<%= oldInput && oldInput.email ? oldInput.email : '' %>"  placeholder="Email" autocomplete="email">
   
         <input type="password" name="password" id="password" placeholder="Password">
         <%- include("./partials/errors.ejs") %>
@@ -23,6 +23,8 @@
         <button type="submit">Submit</button>
       </form>
     <%}%>
+    <p>Don't have an account?</p>
+    <a href="/sign-up">Sign up</a>
   </main>
 
 </body>

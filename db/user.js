@@ -57,23 +57,35 @@ async function getFilesFromDB() {
 }
 
 async function getUrl(id) {
- const file = await prisma.file.findUnique({
-  where: {
-    id:id
+  try {
+    const file = await prisma.file.findUnique({
+     where: {
+       id:id
+     }
+    })
+    return file.url;
+    
+  } catch (error) {
+    console.error('Error in getUrl', error);
+    throw error;
   }
- })
- return file.url;
 }
 
 async function createFolderInDB(ownerId, parentId, newFolderName) {
-  const newFolder = await prisma.folder.create({
-    data: {
-      ownerId: ownerId,
-      parentId: parentId,
-      name: newFolderName,
-    }
-  })
-  return newFolder;
+  try {
+
+    const newFolder = await prisma.folder.create({
+      data: {
+        ownerId: ownerId,
+        parentId: parentId,
+        name: newFolderName,
+      }
+    })
+    return newFolder;
+  } catch (error) {
+    console.error('Error in createFolder', error);
+    throw (error);
+  }
 }
 
 async function getFoldersFromDb() {

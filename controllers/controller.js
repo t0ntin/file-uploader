@@ -5,14 +5,14 @@ import passport from 'passport';
 
 
 function getSignInView(req, res) {
-  console.log('this is req.user: ', req.user);
+  // console.log('this is req.user: ', req.user);
   const user = req.user;
-  res.render('index', {title: "Sign in", user})
+  res.render('index', {title: "Sign in", user, oldInput: {}})
 }
 
 const validateSignUp = [
-  body("firstName").trim().notEmpty().withMessage("First name is required"),
-  body("lastName").trim().notEmpty().withMessage("Last name is required"),
+  body("firstName").trim().notEmpty().withMessage("First name is required").isAlpha().withMessage('First name must only contain letters'),
+  body("lastName").trim().notEmpty().withMessage("Last name is required").isAlpha().withMessage('Last name must only contain letters'),
   body("email").trim().isEmail().withMessage("Enter a valid email").normalizeEmail(),
   body("password")
     .isLength({ min: 6 })
@@ -20,19 +20,46 @@ const validateSignUp = [
 ];
 
 function getSignUpView(req, res) {
-  res.render('sign-up', {title: "Sign up"})
+  res.render('sign-up', {title: "Sign up", oldInput: {}})
 }
 
-async function signUpPost(req, res, next) {
-  try {
-    const {firstName, lastName, email, password} = req.body;
-    await addNewUserToDB(firstName, lastName, email, password);
-      res.render('sign-up', {title: 'Success'})
-  } catch (error) {
-      console.error(error);
-      next(error);
+const signUpPost = [
+  validateSignUp,
+  async (req, res, next) => {
+    console.log('Request body:', req.body);
+    const errors = validationResult(req);
+    console.log('Validation errors:', errors.array());
+    if (!errors.isEmpty()) {
+      return res.status(400).render("sign-up", { 
+        title: "Sign in", 
+        user: req.user, 
+        oldInput: req.body, 
+        errors: errors.array(), 
+      });
+    }
+
+    try {
+      const {firstName, lastName, email, password} = req.body;
+      await addNewUserToDB(firstName, lastName, email, password);
+        res.render('sign-up', {title: 'Success',  oldInput: {},    errors: []})
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
   }
-};
+];
+
+
+// async function signUpPost(req, res, next) {
+//   try {
+//     const {firstName, lastName, email, password} = req.body;
+//     await addNewUserToDB(firstName, lastName, email, password);
+//       res.render('sign-up', {title: 'Success'})
+//   } catch (error) {
+//       console.error(error);
+//       next(error);
+//   }
+// };
 
 const validateSignIn = [
   body("email").trim().isEmail().withMessage("Enter a valid email").normalizeEmail(),
@@ -87,17 +114,7 @@ async function getDriveView(req, res) {
   res.render('drive', {title: 'Your Drive'})
 };
 
-
-async function getUploadView(req, res) {
-  res.render('upload', {title: "Upload a file", message: null})
-};
-
 async function getFilesView(req, res) {
-  // const allFiles = await getFilesFromDB(); 
-  // const rootFolders = await getRootFolders(req.user.id);
-  // const rootFiles = await getRootFiles(req.user.id);
-  // const filesInSelectedFolder = await getFilesInSelectedFolder(Number(req.params.id));
-  // const selectedFolder = await getSelectedFolderId(Number(req.params.id));
   let rootFolders = [];
   let rootFiles = [];
   let subFolders = [];
@@ -125,19 +142,6 @@ async function getFilesView(req, res) {
   console.log('this is selectedfolder: ', selectedFolder);
   res.render('files', {title: 'Your files:', message: null,  rootFiles, rootFolders, subFolders, filesInSelectedFolder, selectedFolder})
 }
-
-
-
-// async function showFoldersInFilesView(req, res) {
-//   const files = await getFilesFromDB(); 
-//   const rootFolders = await getRootFolders(req.user.id);
-//   const allFolders = await getFoldersFromDb();
-//   const rootFiles = await getRootFiles(req.user.id);
-//   const subFolders = await getSubFolders(Number(req.params.id));
-//   const filesInSelectedFolder = await getFilesInSelectedFolder(Number(req.params.id));
-//   console.log('selected files', filesInSelectedFolder);
-//   res.render('files', {title: 'Your files:', message: null, rootFiles, rootFolders, subFolders, filesInSelectedFolder})
-// }
 
 async function downloadFile(req, res) {
   const url = await getUrl(Number(req.body.id));
@@ -215,7 +219,6 @@ export {
   signInPost,
   getLogOut,
   getDriveView,
-  getUploadView,
   downloadFile,
   getFilesView,
   createFolderPost,

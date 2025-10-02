@@ -18,8 +18,8 @@
 
     <% if (rootFolders && rootFolders.length > 0) { %>
       <h3>Folders:</h3>
-      <ul class="root-folders-container">
-        <% rootFolders.forEach((rootFolder) => { %>
+      <% rootFolders.forEach((rootFolder) => { %>
+        <ul class="root-folders-container">
           <li class="folder-link-and-edit-button-container">
             <a class="folder-link" href="/files/<%= rootFolder.id %>"><%= rootFolder.name %></a>
             <button class="edit-name-button" type="button">Edit</button>
@@ -28,8 +28,8 @@
             </button>
             <input class="hidden-input-root-folders" type="hidden" value="<%= rootFolder.id%>">
           </li>
+        </ul>
         <% }) %>
-      </ul>
     <% } %>
     
 
