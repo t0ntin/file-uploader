@@ -17,9 +17,10 @@
     <button class="upload-button">Upload here</button>
 
     <% if (rootFolders && rootFolders.length > 0) { %>
-      <h3>Folders:</h3>
-      <% rootFolders.forEach((rootFolder) => { %>
-        <ul class="root-folders-container">
+      
+      <ul class="root-folders-container">
+        <h3>Folders:</h3>
+        <% rootFolders.forEach((rootFolder) => { %>
           <li class="folder-link-and-edit-button-container">
             <a class="folder-link" href="/files/<%= rootFolder.id %>"><%= rootFolder.name %></a>
             <button class="edit-name-button" type="button">Edit</button>
@@ -28,14 +29,14 @@
             </button>
             <input class="hidden-input-root-folders" type="hidden" value="<%= rootFolder.id%>">
           </li>
-        </ul>
         <% }) %>
+      </ul>
     <% } %>
     
 
     <% if (subFolders && subFolders.length > 0) { %>
-      <h3>Subfolders in: <%= selectedFolder.name %></h3>
-      <ul>
+      <ul class="root-folders-container">
+        <h3>Subfolders in: <%= selectedFolder.name %></h3>
         <% subFolders.forEach((subFolder) => { %>
           <li class="folder-link-and-edit-button-container">
             <a class="folder-link" href="/files/<%= subFolder.id %>"><%= subFolder.name %></a>
@@ -50,51 +51,55 @@
     <% } %>
     
     <% if (filesInSelectedFolder && filesInSelectedFolder.length > 0) { %>
-      <h3>Files in: <%=selectedFolder.name %></h3>
-      <% filesInSelectedFolder.forEach((file) => { %>
-        <ul class="file-name-and-download-button-container">
-          <li class="file-name"><%= file.fileName %></li>
-          <form class="download-form" action="/download" method="POST">
-            <input type="hidden" name="id" value="<%= file.id%>">
-            <button class="download-button" type="submit">
-              <img class="download-img" src="/images/download.svg" alt="">
-            </button>
-          </form>
-
-          <form class="delete-file-form" action="/delete-file" method="POST">
-            <button class="delete-folder-button" type="submit">
-              <img class="trash-icon" src="/images/trash.svg" alt="">
-            </button>
-            <input type="hidden" name="id" value="<%= file.id %>"> 
-            <input type="hidden" name="folderId" value="<%= file.folderId %>">
-            
-          </form>
-        </ul>
-      <% }) %>
+      <ul class="file-options-container">
+        <h3>Files in: <%=selectedFolder.name %></h3>
+        <% filesInSelectedFolder.forEach((file) => { %>
+          <li class="file-download-delete-container"><%= file.fileName %>
+          
+            <form class="download-form" action="/download" method="POST">
+              <input type="hidden" name="id" value="<%= file.id%>">
+              <button class="download-button" type="submit">
+                <img class="download-img" src="/images/download.svg" alt="">
+              </button>
+            </form>
+  
+            <form class="delete-file-form" action="/delete-file" method="POST">
+              <button class="delete-folder-button" type="submit">
+                <img class="trash-icon" src="/images/trash.svg" alt="">
+              </button>
+              <input type="hidden" name="id" value="<%= file.id %>"> 
+              <input type="hidden" name="folderId" value="<%= file.folderId %>">
+              
+            </form>
+          </li>
+        <% }) %>
+      </ul>
     <% } %>
     
     <% if (rootFiles) { %>
-      <h3>Files in root:</h3>
-      <% rootFiles.forEach((file) => { %>
-        <ul class="file-name-and-download-button-container">
-          <li class="file-name"><%= file.fileName %></li>
-          <form class="download-form" action="/download" method="POST">
-            <input type="hidden" name="id" value="<%= file.id%>">
-            <button class="download-button" type="submit">
-              <img class="download-img" src="/images/download.svg" alt="">
-            </button>
-          </form>
-
-          <form class="delete-file-form" action="/delete-file" method="POST">
-            <button class="delete-folder-button" type="submit">
-              <img class="trash-icon" src="/images/trash.svg" alt="">
-            </button>
-            <input type="hidden" name="id" value="<%= file.id %>"> 
-            <input type="hidden" name="folderId" value="<%= file.folderId %>">
-            
-          </form>
-        </ul>
-      <% }) %>
+      <ul class="file-options-container">
+        <h3>Files in root:</h3>
+        <% rootFiles.forEach((file) => { %>
+          <li class="file-download-delete-container"><%= file.fileName %>
+          
+            <form class="download-form" action="/download" method="POST">
+              <input type="hidden" name="id" value="<%= file.id%>">
+              <button class="download-button" type="submit">
+                <img class="download-img" src="/images/download.svg" alt="">
+              </button>
+            </form>
+  
+            <form class="delete-file-form" action="/delete-file" method="POST">
+              <button class="delete-folder-button" type="submit">
+                <img class="trash-icon" src="/images/trash.svg" alt="">
+              </button>
+              <input type="hidden" name="id" value="<%= file.id %>"> 
+              <input type="hidden" name="folderId" value="<%= file.folderId %>">
+              
+            </form>
+          </li>
+        <% }) %>
+      </ul>
     <% } %>
 
     <form action="<%= selectedFolder ? `/files/${selectedFolder.id}` : '/files' %>" method="POST">

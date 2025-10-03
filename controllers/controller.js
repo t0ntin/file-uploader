@@ -20,7 +20,8 @@ const validateSignUp = [
 ];
 
 function getSignUpView(req, res) {
-  res.render('sign-up', {title: "Sign up", oldInput: {}})
+  res.render('sign-up', {title: "Sign up", 
+  oldInput: {}})
 }
 
 const signUpPost = [
@@ -43,7 +44,18 @@ const signUpPost = [
       await addNewUserToDB(firstName, lastName, email, password);
         res.render('sign-up', {title: 'Success',  oldInput: {},    errors: []})
     } catch (error) {
-        console.error(error);
+        // console.error('Error at signUpPost: ', error);
+        if (error.code === 'P2002') {
+          return res.render('sign-up', {
+            title: 'Sign up',
+            errors: [{ msg: 'Email already exists' }], 
+            oldInput: {
+              firstName: req.body.firstName,
+              lastName: req.body.lastName, 
+              email: req.body.email
+            }
+          });
+        }
         next(error);
     }
   }

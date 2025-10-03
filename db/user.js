@@ -26,7 +26,6 @@ async function addNewUserToDB(firstName, lastName, email, password) {
 
 async function storeFileInfoInDB(userId, folderId, originalname, mimetype, fileSize) {
   try {
-
     const fileInfo = await prisma.file.create({
       data: {
         ownerId: userId, 
@@ -42,7 +41,6 @@ async function storeFileInfoInDB(userId, folderId, originalname, mimetype, fileS
     console.error('Error adding file: ', error);
     throw error;
   }
-
 }
 
 async function getFilesFromDB() {
