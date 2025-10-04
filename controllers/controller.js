@@ -1,14 +1,10 @@
-import {addNewUserToDB, getFilesFromDB, getUrl, createFolderInDB, getFoldersFromDb, getRootFiles, getRootFolders, getSubFolders, getFilesInSelectedFolder, getSelectedFolderId, editFolderName, deleteFolder, deleteFile } from '../db/user.js';
+import {addNewUserToDB, getFilesFromDB, getUrl, createFolderInDB, getRootFiles, getRootFolders, getSubFolders, getFilesInSelectedFolder, getSelectedFolderId, editFolderName, deleteFolder, deleteFile } from '../db/user.js';
 import { body, validationResult } from "express-validator";
 import passport from 'passport';
 
 
 
-function getSignInView(req, res) {
-  // console.log('this is req.user: ', req.user);
-  const user = req.user;
-  res.render('index', {title: "Sign in", user, oldInput: {}})
-}
+
 
 const validateSignUp = [
   body("firstName").trim().notEmpty().withMessage("First name is required").isAlpha().withMessage('First name must only contain letters'),
@@ -61,17 +57,11 @@ const signUpPost = [
   }
 ];
 
-
-// async function signUpPost(req, res, next) {
-//   try {
-//     const {firstName, lastName, email, password} = req.body;
-//     await addNewUserToDB(firstName, lastName, email, password);
-//       res.render('sign-up', {title: 'Success'})
-//   } catch (error) {
-//       console.error(error);
-//       next(error);
-//   }
-// };
+function getSignInView(req, res) {
+  // console.log('this is req.user: ', req.user);
+  const user = req.user;
+  res.render('index', {title: "Sign in", user, oldInput: {}})
+}
 
 const validateSignIn = [
   body("email").trim().isEmail().withMessage("Enter a valid email").normalizeEmail(),

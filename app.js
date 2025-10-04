@@ -39,7 +39,7 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.urlencoded({extended:true}));
 
 app.use(session({
-  secret: "cats", // change this to an env variable in production
+  secret: "process.env.SESSION_SECRET", 
   resave: false,
   saveUninitialized: false,
   store: new PrismaSessionStore(prisma, {
@@ -126,11 +126,10 @@ const storage = multer.diskStorage({
 //   res.redirect('/files');
 // });
 // Multer config (keeps files in /tmp until uploaded to Cloudinary)
-const upload = multer({ dest: 'tmp/' });
+const upload = multer({ dest: 'tmp/', limits: { fileSize: 3 * 1024 * 1024 } });
 
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
-    console.log('testing inside upload route');
     // Get folder ID from hidden input
     const folderId = req.body.folderId ? Number(req.body.folderId) : null;
 
@@ -170,6 +169,13 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 
 
 
+app.use((err, req, res, next) => {
+  if (err.code === "LIMIT_FILE_SIZE") {
+    req.flash('error', 'File is too large (Max: 2MB)');
+    return res.redirect('/files');
+  }
+  next(err);
+});
 
 
 app.use((req, res) => {

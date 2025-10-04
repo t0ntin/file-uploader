@@ -86,16 +86,6 @@ async function createFolderInDB(ownerId, parentId, newFolderName) {
   }
 }
 
-async function getFoldersFromDb() {
-  try {
-    const folders = await prisma.folder.findMany();
-    return folders;
-  } catch (error) {
-    console.error('Error retrieving folder list', error);
-    throw error;
-  }
-}
-
 async function getRootFolders(id) {
   try {
     const rootFolders = await prisma.folder.findMany({
@@ -219,7 +209,6 @@ export {
   getFilesFromDB,
   getUrl,
   createFolderInDB,
-  getFoldersFromDb,
   getRootFolders,
   getRootFiles,
   getSubFolders,
