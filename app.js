@@ -171,7 +171,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 
 app.use((err, req, res, next) => {
   if (err.code === "LIMIT_FILE_SIZE") {
-    req.flash('error', 'File is too large (Max: 2MB)');
+    req.flash('error', 'File is too large (Max: 3MB)');
     return res.redirect('/files');
   }
   next(err);

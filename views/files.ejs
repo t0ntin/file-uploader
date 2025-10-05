@@ -88,7 +88,12 @@
                 <img class="download-img" src="/images/download.svg" alt="">
               </button>
             </form>
-  
+            
+            <button class="move-button" type="button">
+              <img src="/images/move.svg" alt="" class="move-file-img">
+              <input class="file-id" type="hidden" name="id" value="<%= file.id %>"> 
+            </button>
+
             <form class="delete-file-form" action="/delete-file" method="POST">
               <button class="delete-folder-button" type="submit">
                 <img class="trash-icon" src="/images/trash.svg" alt="">
@@ -135,6 +140,18 @@
       <input class="hidden-input-in-delete-folder-form" type="hidden" name="selectedForDeletion" > 
       <input type="hidden" name="parentId" value="<%= selectedFolder ? selectedFolder.id : '' %>">
       <button type="submit">Delete</button>
+    </form>
+
+    <form action="/move-file" class="move-file-form" method="POST">
+      <p>Move File to:</p>
+
+
+      <%- include("./partials/folderTree", { folderTree }) %>
+
+
+
+      <input class="hidden-input-in-move-file-form" type="hidden" name="fileId" value="">
+      <button type="submit">Submit</button>
     </form>
 
     <div class="overlay"></div>

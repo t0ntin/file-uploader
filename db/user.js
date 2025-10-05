@@ -117,7 +117,37 @@ async function getRootFiles(id) {
   }
 }
 
-async function getSubFolders (id) {
+async function getAllSubFolders() {
+  try {
+    const allSubfolders = await prisma.folder.findMany({
+      where: {
+        parentId: {
+          not: null
+    }
+  }
+    })
+    return allSubfolders;
+  } catch (error) {
+    console.error('Error in getAllSubFolders.', error);
+    throw error;
+  }
+}
+
+async function getAllFolders(id) {
+  try {
+    const allFolders = await prisma.folder.findMany({
+      where: {
+        ownerId: id,
+      }
+    });
+    return allFolders;
+  } catch (error) {
+    console.error('Error in findAllFolders. ', error);
+    throw error;
+  }
+}
+
+async function getSubFolders(id) {
   try {
     const subFolders = await prisma.folder.findMany( {
       where: {
@@ -203,6 +233,22 @@ async function deleteFile (id) {
   }
 }
 
+async function moveFile(fileId, folderId) {
+  try {
+    await prisma.file.update({
+      where: {
+        id:fileId,
+      },
+      data: {
+        folderId,
+      }
+    })
+  } catch (error) {
+    console.log('Error in moveFile.', error);
+    throw error;
+  }
+}
+
 export {
   addNewUserToDB,
   storeFileInfoInDB, 
@@ -211,11 +257,14 @@ export {
   createFolderInDB,
   getRootFolders,
   getRootFiles,
+  getAllFolders,
+  getAllSubFolders,
   getSubFolders,
   getFilesInSelectedFolder, 
   getSelectedFolderId,
   editFolderName,
   deleteFolder,
   deleteFile,
-
+  moveFile,
+  
 }

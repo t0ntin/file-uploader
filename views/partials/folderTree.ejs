@@ -1,0 +1,19 @@
+<ul class="folder-tree">
+  <% folderTree.forEach(folder => { %>
+    <li class="folder-item">
+      <label class="folder-label">
+        <input type="radio" name="selectedFolderToMoveFile" value="<%= folder.id %>" class="folder-radio">
+        <span class="folder-name">
+          <i class="folder-icon">📁</i>
+          <%= folder.name %>
+        </span>
+      </label>
+
+      <% if (folder.children && folder.children.length > 0) { %>
+        <ul class="subfolder-list">
+          <%- include("./folderTree", { folderTree: folder.children }) %>
+        </ul>
+      <% } %>
+    </li>
+  <% }) %>
+</ul>

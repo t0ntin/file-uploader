@@ -1,4 +1,4 @@
-import {addNewUserToDB, getFilesFromDB, getUrl, createFolderInDB, getRootFiles, getRootFolders, getSubFolders, getFilesInSelectedFolder, getSelectedFolderId, editFolderName, deleteFolder, deleteFile } from '../db/user.js';
+import {addNewUserToDB, getFilesFromDB, getUrl, createFolderInDB, getRootFiles, getAllFolders,  getAllSubFolders, getRootFolders, getSubFolders, getFilesInSelectedFolder, getSelectedFolderId, editFolderName, deleteFolder, deleteFile, moveFile } from '../db/user.js';
 import { body, validationResult } from "express-validator";
 import passport from 'passport';
 
@@ -116,12 +116,23 @@ async function getDriveView(req, res) {
   res.render('drive', {title: 'Your Drive'})
 };
 
+function buildTree(folders, parentId = null) {
+  return folders
+    .filter(folder => folder.parentId === parentId)
+    .map(folder => ({
+      ...folder,
+      children: buildTree(folders, folder.id)
+    }));
+}
+
+
 async function getFilesView(req, res) {
   let rootFolders = [];
   let rootFiles = [];
   let subFolders = [];
   let filesInSelectedFolder = [];
   let selectedFolder = null;
+  let allFolders = []
 
   if (req.params.id) {
     // CASE 2: Inside a folder
@@ -141,8 +152,19 @@ async function getFilesView(req, res) {
     rootFolders = await getRootFolders(req.user.id);
     rootFiles = await getRootFiles(req.user.id);
   }
-  console.log('this is selectedfolder: ', selectedFolder);
-  res.render('files', {title: 'Your files:', message: null,  rootFiles, rootFolders, subFolders, filesInSelectedFolder, selectedFolder})
+//   console.log("rootFolders:", rootFolders);
+// console.log("subFolders:", subFolders);
+// console.log("selectedFolder:", selectedFolder);
+
+  // console.log('this is selectedfolder: ', selectedFolder);
+  allFolders = await getAllFolders(req.user.id);
+  // const allSubfolders = await getAllSubFolders(); //CAN'T DO THIS
+
+  const folderTree = buildTree(allFolders);
+
+  // console.log('this is allFolders: ', allFolders);
+  // console.log('this is foldertree: ', folderTree);
+  res.render('files', {title: 'Your files:', message: null,  rootFiles, rootFolders, subFolders, filesInSelectedFolder, selectedFolder, folderTree})
 }
 
 async function downloadFile(req, res) {
@@ -214,6 +236,14 @@ async function deleteFilePost(req, res) {
   }
 }
 
+
+async function moveFilePost(req, res) {
+  const fileId = Number(req.body.fileId);
+  const folderId = Number(req.body.selectedFolderToMoveFile);
+  await moveFile(fileId, folderId);
+  res.redirect('/files');
+}
+
 export {
   getSignInView,
   getSignUpView,
@@ -229,6 +259,8 @@ export {
   deleteFolderPost,
   getDetailsView,
   deleteFilePost,
+  moveFilePost,
+
 
 }
 

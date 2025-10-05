@@ -10,6 +10,9 @@ const deleteFolderButtonEls = document.querySelectorAll('.delete-folder-button')
 const deleteFolderFormEl = document.querySelector('.delete-folder-form');
 const hiddenInput = document.querySelector('.hidden-input-root-folders');
 const hiddenInputInDeleteForm = document.querySelector('.hidden-input-in-delete-folder-form');
+const moveButtonEls = document.querySelectorAll('.move-button');
+const moveFileFormEl = document.querySelector('.move-file-form');
+const hiddenInputInMoveFileForm = document.querySelector('.hidden-input-in-move-file-form');
 
 // EVENT LISTENER FOR UPLOADING FILE
 uploadButtonEl.addEventListener('click', openUploadForm);
@@ -88,6 +91,20 @@ function deleteSubfolder(e) {
   overlayEl.classList.toggle('overlay-visible');
 }
 
+moveButtonEls.forEach((button) => {
+  button.addEventListener('click', openMoveFileDialogue);
+});
+
+function openMoveFileDialogue(e) {
+  const button = e.target.closest('.move-button');
+  const fileId = button.parentElement.querySelector('.file-id').value
+  hiddenInputInMoveFileForm.value = fileId;
+  moveFileFormEl.classList.toggle('visible');
+  overlayEl.classList.toggle('overlay-visible');
+
+
+  
+}
 
 overlayEl.addEventListener('click', ()=> {
   // overlayEl.classList.toggle('overlay-visible');
@@ -106,4 +123,10 @@ overlayEl.addEventListener('click', ()=> {
     uploadFormEl.classList.remove('visible');
     overlayEl.classList.remove('overlay-visible');
   }
+
+  if (moveFileFormEl.classList.contains('visible')) {
+    moveFileFormEl.classList.remove('visible');
+    overlayEl.classList.remove('overlay-visible');
+  }
+
 });
