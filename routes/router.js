@@ -33,4 +33,6 @@ router.get('/details', getDetailsView);
 
 router.post('/move-file', moveFilePost);
 
+
+
 export default router;

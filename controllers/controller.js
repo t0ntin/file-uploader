@@ -162,6 +162,7 @@ async function getFilesView(req, res) {
 
   const folderTree = buildTree(allFolders);
 
+
   // console.log('this is allFolders: ', allFolders);
   // console.log('this is foldertree: ', folderTree);
   res.render('files', {title: 'Your files:', message: null,  rootFiles, rootFolders, subFolders, filesInSelectedFolder, selectedFolder, folderTree})
